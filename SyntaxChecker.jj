@@ -1,0 +1,141 @@
+/*
+  Name: Josue Arellano
+  Partners: Julio Berina, Roberto Gonzalez
+  How to run:
+      Leave the SyntaxChecker.jj file within the /lexAnalyzer directory and the text files
+        that contain data in the parent directory ("input.txt","keywords.txt"). Enter the directory 
+        and run javacc on the SyntaxChecker.jj file (javacc SyntaxChecker.jj). Go to 
+        /lexAnalyzer directory parent and compile all the java files within /lexAnalzyer 
+        (javac lexAnalzyer/*.java). From the parent directory, run the SyntaxChecker file
+        (java lexAnalzyer.SyntaxChecker).
+*/
+PARSER_BEGIN(SyntaxChecker)
+package lexAnalyzer;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.util.Vector;
+
+public class SyntaxChecker {
+  public static void main(String[] args) throws Exception{
+    //Trie table object to be passed
+    Trie keysNIds = new Trie();
+    try {
+      //inputing all keywords that are placed in the file keywords.txt into Trie table
+      File keywordsFile = new File("keywords.txt");
+      Scanner keyScan = new Scanner(keywordsFile);
+      while(keyScan.hasNext()) {
+        keysNIds.add(keyScan.nextLine());
+      }
+    } catch(Exception e) {
+      System.out.println(e.getMessage());
+    }
+    try {
+      //getting sample Toy program to pass into SyntaxChecker
+      File toyProgram = new File("test program.cpp");
+      Scanner programRead = new Scanner(toyProgram);
+      StringBuilder fileString = new StringBuilder();
+      while(programRead.hasNext()) {
+        String str = programRead.nextLine();
+        fileString.append(str + "\n");
+      }
+      FileWriter fw = new FileWriter("tokenOutput.txt", true);
+      PrintWriter out = new PrintWriter("tokenOutput.txt","UTF-8");
+      
+      new SyntaxChecker(new java.io.StringReader(fileString.toString())).S(keysNIds, out);
+      out.close();
+      System.out.println("done");
+    } catch(Exception e) {
+      System.out.println(e.getMessage());
+    }
+    keysNIds.print();
+  }
+}
+
+PARSER_END(SyntaxChecker)
+
+SKIP: {" " | "\t" }
+TOKEN:{ <PLUS: "+"> | <BREAK: "break"> | <MINUS: "-"> | <CLASS: "class">
+        | <ELSE: "else"> | <MULT: "*"> | <DIV: "/"> | <MOD: "%">
+        | <EXTENDS: "extends"> | <LESS: "<"> | <LESSEQ: "<="> | <GREAT: ">">
+        | <NWLINE: (["\n","\r"])+>
+        | <FOR: "for"> | <GREATEQ: ">="> | <EQUAL: "=="> | <NOTEQUAL: "!=">
+        | <IF: "if"> | <AND: "&&"> | <OR: "||"> | <NOT: "!"> | <ASSIGNOP: "=">
+        | <IMPLEMENTS: "implements"> | <SEMI: ";"> | <COMMA: ",">
+        | <INTERFACE: "interface"> | <PERIOD: "."> | <LEFTPAREN: "(">
+        | <NEW: "new"> | <RIGHTPAREN: ")"> | <LEFTBRACK: "["> | <RIGHTBRACK: "]">
+        | <NEWARRAY: "newarray"> | <LEFTBRACE: "{"> | <RIGHTBRACE: "}">
+        | <NULL: "null">
+        | <PRINTLN: "println">
+        | <DOUBLE: "double">
+        | <READLN: "readln">
+        | <RETURN: "return">
+        | <VOID: "void">
+        | <WHILE: "while">
+        | <BOOLEAN: "boolean">
+        | <BOOLEANCONST: "true" | "false">
+        | <INT: "int">
+        | <INTCONST: ("0x" | "0X")(<NUM> | ["A"-"F","a"-"f"])+>
+        | <COMMENT: "//" (~["\n", "\r"])* ("\n"|"\r"|"\r\n") | "/*" (("*")*~["/"])* "*/">
+        | <IDENTIFIER: <LETTER> (<LETTER> | <NUM> | "_")*>
+        | <LETTER: ["A"-"Z","a"-"z"]>
+        | <DOUBLECONST: <NUM> "." (<NUM>)* (["E", "e"](["-","+"])?<NUM>)?>
+        | <NUM: (["0"-"9"])+>
+        | <STRING: ["\"","\u201c"] (~["\"","\n","\r"])* ["\"","\u201d"]>
+      }
+
+void S(Trie s, PrintWriter out): {Token n; System.out.print(' ');}
+{
+  <COMMENT> {} S(s, out)
+  | <DOUBLECONST> {System.out.print("_doubleconstant "); out.print(Tokens._doubleconstant.getValue() + " ");} S(s, out)
+  | (<INTCONST> | <NUM>) {System.out.print("_intconstant "); out.print(Tokens._intconstant.getValue() + " ");} S(s, out)
+  | <STRING> {System.out.print("_stringconstant "); out.print(Tokens._stringconstant.getValue() + " ");} S(s, out)
+  | <ELSE> {System.out.print("_extends "); out.print(Tokens._extends.getValue() + " ");} S(s,out)
+  | <FOR> {System.out.print("_for "); out.print(Tokens._for.getValue() + " ");} S(s,out)
+  | <IMPLEMENTS> {System.out.print("_implements "); out.print(Tokens._implements.getValue() + " ");} S(s,out)
+  | <INTERFACE> {System.out.print("_interface "); out.print(Tokens._interface.getValue() + " ");} S(s,out)
+  | <NEW> {System.out.print("_new "); out.print(Tokens._new.getValue() + " ");} S(s,out)
+  | <PRINTLN> {System.out.print("_println "); out.print(Tokens._println.getValue() + " ");} S(s,out)
+  | <READLN> {System.out.print("_readln "); out.print(Tokens._readln.getValue() + " ");} S(s,out)
+  | <RETURN> {System.out.print("_return "); out.print(Tokens._return.getValue() + " ");} S(s,out)
+  | <EXTENDS> {System.out.print("_extends "); out.print(Tokens._extends.getValue() + " ");} S(s,out)
+  | <VOID> {System.out.print("_void "); out.print(Tokens._void.getValue() + " ");} S(s,out)
+  | <WHILE> {System.out.print("_while "); out.print(Tokens._while.getValue() + " ");} S(s,out)
+  | <BOOLEANCONST> {System.out.print("_booleanconstant "); out.print(Tokens._booleanconstant.getValue() + " ");} S(s, out)
+  | <PLUS> {System.out.print("_plus "); out.print(Tokens._plus.getValue() + " ");} S(s, out)
+  | <MINUS> {System.out.print("_minus "); out.print(Tokens._minus.getValue() + " ");} S(s, out)
+  | <MULT> {System.out.print("_multiplication "); out.print(Tokens._multiplication.getValue() + " ");} S(s,out)
+  | <DIV> {System.out.print("_division "); out.print(Tokens._division.getValue() + " ");} S(s, out)
+  | <MOD> {System.out.print("_mod "); out.print(Tokens._mod.getValue() + " ");} S(s, out)
+  | <LESS> {System.out.print("_less "); out.print(Tokens._less.getValue() + " ");} S(s,out)
+  | <LESSEQ> {System.out.print("_lessequal "); out.print(Tokens._lessequal.getValue() + " ");} S(s,out)
+  | <GREAT> {System.out.print("_greater "); out.print(Tokens._greater.getValue() + " ");} S(s,out)
+  | <GREATEQ> {System.out.print("_greaterequal "); out.print(Tokens._greaterequal.getValue() + " ");} S(s,out)
+  | <EQUAL> {System.out.print("_equal "); out.print(Tokens._equal.getValue() + " ");} S(s,out)
+  | <NOTEQUAL> {System.out.print("_notequal "); out.print(Tokens._notequal.getValue() + " ");} S(s,out)
+  | <AND> {System.out.print("_and "); out.print(Tokens._and.getValue() + " ");} S(s,out)
+  | <BOOLEAN> {System.out.print("_boolean "); out.print(Tokens._boolean.getValue() + " ");} S(s,out)
+  | <OR> {System.out.print("_or "); out.print(Tokens._or.getValue() + " ");} S(s,out)
+  | <NOT> {System.out.print("_not "); out.print(Tokens._not.getValue() + " ");} S(s,out)
+  | <ASSIGNOP> {System.out.print("_assignop "); out.print(Tokens._assignop.getValue() + " ");} S(s,out)
+  | <SEMI> {System.out.print("_semicolon "); out.print(Tokens._semicolon.getValue() + " ");} S(s,out)
+  | <COMMA> {System.out.print("_comma "); out.print(Tokens._comma.getValue() + " ");} S(s,out)
+  | <PERIOD> {System.out.print("_period "); out.print(Tokens._period.getValue() + " ");} S(s,out)
+  | <LEFTPAREN> {System.out.print("_leftparen "); out.print(Tokens._leftparen.getValue() + " ");} S(s,out)
+  | <RIGHTPAREN> {System.out.print("_rightparen "); out.print(Tokens._rightparen.getValue() + " ");} S(s,out)
+  | <LEFTBRACK> {System.out.print("_leftbracket "); out.print(Tokens._leftbracket.getValue() + " ");} S(s,out)
+  | <RIGHTBRACK> {System.out.print("_rightbracket "); out.print(Tokens._rightbracket.getValue() + " ");} S(s,out)
+  | <LEFTBRACE> {System.out.print("_leftbrace "); out.print(Tokens._leftbrace.getValue() + " ");} S(s,out)
+  | <RIGHTBRACE> {System.out.print("_rightbrace "); out.print(Tokens._rightbrace.getValue() + " ");} S(s,out)
+  | <DOUBLE> {System.out.print("_double "); out.print(Tokens._double.getValue() + " ");} S(s,out)
+  | <BREAK> {System.out.print("_break "); out.print(Tokens._break.getValue() + " ");} S(s,out)
+  | <NEWARRAY> {System.out.print("_newarray "); out.print(Tokens._newarray.getValue() + " ");} S(s,out)
+  | <NWLINE> {System.out.print("\n"); out.println();} S(s,out)
+  | <CLASS> {System.out.print("_class "); out.print(Tokens._class.getValue() + " ");} S(s,out)
+  | <IF> {System.out.print("_if "); out.print(Tokens._if.getValue() + " ");} S(s,out)
+  | <INT> {System.out.print("_int "); out.print(Tokens._int.getValue() + " ");} S(s,out)
+  | n = <IDENTIFIER> {System.out.print("_id "); out.print(Tokens._id.getValue() + " ");s.add(n.image);} S(s,out)
+  | <EOF> {System.out.print("\n"); out.println();}
+}
