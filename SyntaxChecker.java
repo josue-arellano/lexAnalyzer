@@ -23,7 +23,7 @@ public class SyntaxChecker implements SyntaxCheckerConstants {
     }
     try {
       //getting sample Toy program to pass into SyntaxChecker
-      File toyProgram = new File("test program.cpp");
+      File toyProgram = new File("input.cpp");
       Scanner programRead = new Scanner(toyProgram);
       StringBuilder fileString = new StringBuilder();
       while(programRead.hasNext()) {
@@ -72,14 +72,14 @@ public class SyntaxChecker implements SyntaxCheckerConstants {
                           System.out.print("_intconstant "); out.print(Tokens._intconstant.getValue() + " ");
       S(s, out);
       break;
-    case STRING:
-      jj_consume_token(STRING);
-              System.out.print("_stringconstant "); out.print(Tokens._stringconstant.getValue() + " ");
+    case STRINGCONST:
+      jj_consume_token(STRINGCONST);
+                   System.out.print("_stringconstant "); out.print(Tokens._stringconstant.getValue() + " ");
       S(s, out);
       break;
     case ELSE:
       jj_consume_token(ELSE);
-            System.out.print("_extends "); out.print(Tokens._extends.getValue() + " ");
+            System.out.print("_else "); out.print(Tokens._else.getValue() + " ");
       S(s,out);
       break;
     case FOR:
@@ -120,6 +120,11 @@ public class SyntaxChecker implements SyntaxCheckerConstants {
     case EXTENDS:
       jj_consume_token(EXTENDS);
                System.out.print("_extends "); out.print(Tokens._extends.getValue() + " ");
+      S(s,out);
+      break;
+    case STRING:
+      jj_consume_token(STRING);
+              System.out.print("_string "); out.print(Tokens._string.getValue() + " ");
       S(s,out);
       break;
     case VOID:
@@ -334,7 +339,7 @@ public class SyntaxChecker implements SyntaxCheckerConstants {
       jj_la1_0 = new int[] {0x0,0xfffffff9,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x210000,0x77ffbf,};
+      jj_la1_1 = new int[] {0x420000,0xefffbf,};
    }
 
   /** Constructor with InputStream. */
@@ -472,7 +477,7 @@ public class SyntaxChecker implements SyntaxCheckerConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[55];
+    boolean[] la1tokens = new boolean[56];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -489,7 +494,7 @@ public class SyntaxChecker implements SyntaxCheckerConstants {
         }
       }
     }
-    for (int i = 0; i < 55; i++) {
+    for (int i = 0; i < 56; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -97,23 +97,25 @@ public interface SyntaxCheckerConstants {
   /** RegularExpression Id. */
   int BOOLEAN = 45;
   /** RegularExpression Id. */
-  int BOOLEANCONST = 46;
+  int STRING = 46;
   /** RegularExpression Id. */
-  int INT = 47;
+  int BOOLEANCONST = 47;
   /** RegularExpression Id. */
-  int INTCONST = 48;
+  int INT = 48;
   /** RegularExpression Id. */
-  int COMMENT = 49;
+  int INTCONST = 49;
   /** RegularExpression Id. */
-  int IDENTIFIER = 50;
+  int COMMENT = 50;
   /** RegularExpression Id. */
-  int LETTER = 51;
+  int IDENTIFIER = 51;
   /** RegularExpression Id. */
-  int DOUBLECONST = 52;
+  int LETTER = 52;
   /** RegularExpression Id. */
-  int NUM = 53;
+  int DOUBLECONST = 53;
   /** RegularExpression Id. */
-  int STRING = 54;
+  int NUM = 54;
+  /** RegularExpression Id. */
+  int STRINGCONST = 55;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -166,6 +168,7 @@ public interface SyntaxCheckerConstants {
     "\"void\"",
     "\"while\"",
     "\"boolean\"",
+    "\"string\"",
     "<BOOLEANCONST>",
     "\"int\"",
     "<INTCONST>",
@@ -174,7 +177,7 @@ public interface SyntaxCheckerConstants {
     "<LETTER>",
     "<DOUBLECONST>",
     "<NUM>",
-    "<STRING>",
+    "<STRINGCONST>",
   };
 
 }

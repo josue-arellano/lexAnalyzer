@@ -1,6 +1,7 @@
 package lexAnalyzer;
 
-import java.util.*;
+import java.util.Vector;
+
 public class Trie
 {
 	final int alphaLen = 52;

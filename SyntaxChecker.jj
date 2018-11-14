@@ -34,7 +34,7 @@ public class SyntaxChecker {
     }
     try {
       //getting sample Toy program to pass into SyntaxChecker
-      File toyProgram = new File("test program.cpp");
+      File toyProgram = new File("input.cpp");
       Scanner programRead = new Scanner(toyProgram);
       StringBuilder fileString = new StringBuilder();
       while(programRead.hasNext()) {
@@ -74,7 +74,7 @@ TOKEN:{ <PLUS: "+"> | <BREAK: "break"> | <MINUS: "-"> | <CLASS: "class">
         | <RETURN: "return">
         | <VOID: "void">
         | <WHILE: "while">
-        | <BOOLEAN: "boolean">
+        | <BOOLEAN: "boolean"> | <STRING: "string">
         | <BOOLEANCONST: "true" | "false">
         | <INT: "int">
         | <INTCONST: ("0x" | "0X")(<NUM> | ["A"-"F","a"-"f"])+>
@@ -83,7 +83,7 @@ TOKEN:{ <PLUS: "+"> | <BREAK: "break"> | <MINUS: "-"> | <CLASS: "class">
         | <LETTER: ["A"-"Z","a"-"z"]>
         | <DOUBLECONST: <NUM> "." (<NUM>)* (["E", "e"](["-","+"])?<NUM>)?>
         | <NUM: (["0"-"9"])+>
-        | <STRING: ["\"","\u201c"] (~["\"","\n","\r"])* ["\"","\u201d"]>
+        | <STRINGCONST: ["\"","\u201c"] (~["\"","\n","\r", "\u201d"])* ["\"","\u201d"]>
       }
 
 void S(Trie s, PrintWriter out): {Token n; System.out.print(' ');}
@@ -91,8 +91,8 @@ void S(Trie s, PrintWriter out): {Token n; System.out.print(' ');}
   <COMMENT> {} S(s, out)
   | <DOUBLECONST> {System.out.print("_doubleconstant "); out.print(Tokens._doubleconstant.getValue() + " ");} S(s, out)
   | (<INTCONST> | <NUM>) {System.out.print("_intconstant "); out.print(Tokens._intconstant.getValue() + " ");} S(s, out)
-  | <STRING> {System.out.print("_stringconstant "); out.print(Tokens._stringconstant.getValue() + " ");} S(s, out)
-  | <ELSE> {System.out.print("_extends "); out.print(Tokens._extends.getValue() + " ");} S(s,out)
+  | <STRINGCONST> {System.out.print("_stringconstant "); out.print(Tokens._stringconstant.getValue() + " ");} S(s, out)
+  | <ELSE> {System.out.print("_else "); out.print(Tokens._else.getValue() + " ");} S(s,out)
   | <FOR> {System.out.print("_for "); out.print(Tokens._for.getValue() + " ");} S(s,out)
   | <IMPLEMENTS> {System.out.print("_implements "); out.print(Tokens._implements.getValue() + " ");} S(s,out)
   | <INTERFACE> {System.out.print("_interface "); out.print(Tokens._interface.getValue() + " ");} S(s,out)
@@ -101,6 +101,7 @@ void S(Trie s, PrintWriter out): {Token n; System.out.print(' ');}
   | <READLN> {System.out.print("_readln "); out.print(Tokens._readln.getValue() + " ");} S(s,out)
   | <RETURN> {System.out.print("_return "); out.print(Tokens._return.getValue() + " ");} S(s,out)
   | <EXTENDS> {System.out.print("_extends "); out.print(Tokens._extends.getValue() + " ");} S(s,out)
+  | <STRING> {System.out.print("_string "); out.print(Tokens._string.getValue() + " ");} S(s,out)
   | <VOID> {System.out.print("_void "); out.print(Tokens._void.getValue() + " ");} S(s,out)
   | <WHILE> {System.out.print("_while "); out.print(Tokens._while.getValue() + " ");} S(s,out)
   | <BOOLEANCONST> {System.out.print("_booleanconstant "); out.print(Tokens._booleanconstant.getValue() + " ");} S(s, out)
